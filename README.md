@@ -44,5 +44,5 @@ Technologies are still being decided.
 
 Currently in the planning and design phase. The README will be updated as features are implemented.
 
-##By Kevin Thomas
+By Kevin Thomas
 
