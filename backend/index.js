@@ -1,9 +1,17 @@
 import 'dotenv/config';
 import express from 'express';
-import pg from 'pg';
+import cors from 'cors';
+import pool from './db/db.js';
+import authRoutes from './routes/auth.js';
+import entriesRoutes from './routes/entries.js';
+import notesRoutes from './routes/notes.js';
+import reviewsRoutes from './routes/reviews.js';
+import challengesRoutes from './routes/challenges.js';
 
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 const app = express();
+
+app.use(cors());
+app.use(express.json());
 
 app.get('/api/health', async (req, res) => {
   try {
@@ -13,6 +21,12 @@ app.get('/api/health', async (req, res) => {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
+
+app.use('/api/auth', authRoutes);
+app.use('/api/entries', entriesRoutes);
+app.use('/api/entries/:entryId/notes', notesRoutes);
+app.use('/api/entries/:entryId/review', reviewsRoutes);
+app.use('/api/entries/:entryId/challenges', challengesRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on http://localhost:${process.env.PORT}`);
