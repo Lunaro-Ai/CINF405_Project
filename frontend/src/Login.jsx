@@ -1,15 +1,26 @@
 import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { api } from './api';
 import './Login.css';
 
-function Login() {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  function handleSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setMessage('Login is not connected to the server yet.');
-  }
+    setError('');
+    try {
+      const data = await api.login({ email, password });
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <main className="login-page">
@@ -38,10 +49,13 @@ function Login() {
 
         <button type="submit">Log in</button>
 
-        {message && <p className="login-message">{message}</p>}
+        {error && <p className="login-message">{error}</p>}
+        <p className="login-message">
+          No account? <Link to="/register">Register</Link>
+        </p>
       </form>
     </main>
   );
-}
+};
 
 export default Login;
